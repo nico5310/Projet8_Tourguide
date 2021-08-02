@@ -9,7 +9,7 @@ import java.util.UUID;
 @FeignClient(name = "Rewards_microservice", url = "localhost:8082")
 public interface RewardsProxy {
 
-    @GetMapping("/getAttractionRewardPoints/{attractionId}/{userId}")
-    int getAttractionRewardPoints(@PathVariable UUID attractionId, @PathVariable UUID userId);
+    @GetMapping(value = "/getAttractionRewardPoints/{attractionId}/{userId}")
+    int getAttractionRewardPoints(@PathVariable ("attractionId")  UUID attractionId, @PathVariable ("userId") UUID userId);
 
 }

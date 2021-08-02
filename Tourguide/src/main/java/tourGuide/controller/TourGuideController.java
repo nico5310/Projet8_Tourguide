@@ -1,21 +1,23 @@
 package tourGuide.controller;
 
-import java.util.List;
-
+import com.jsoniter.output.JsonStream;
+import gpsUtil.location.VisitedLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.jsoniter.output.JsonStream;
-
-import gpsUtil.location.VisitedLocation;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 import tripPricer.Provider;
 
+import java.util.List;
+
 @RestController
 public class TourGuideController {
+
+    private static final Logger logger = LoggerFactory.getLogger(TourGuideController.class);
 
 	@Autowired
 	TourGuideService tourGuideService;

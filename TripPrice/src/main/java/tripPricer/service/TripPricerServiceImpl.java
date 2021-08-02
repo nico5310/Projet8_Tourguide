@@ -2,7 +2,6 @@ package tripPricer.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tripPricer.Provider;
 import tripPricer.TripPricer;
@@ -15,8 +14,8 @@ public class TripPricerServiceImpl implements TripPricerService {
 
     private static final Logger logger = LoggerFactory.getLogger(TripPricerServiceImpl.class);
 
-    @Autowired
-    private static TripPricer tripPricer;
+
+    private final TripPricer tripPricer = new TripPricer();
 
     @Override
     public List<Provider> getPrice(String apiKey, UUID attractionId, int adults, int children, int nightsStay, int rewardsPoints) {

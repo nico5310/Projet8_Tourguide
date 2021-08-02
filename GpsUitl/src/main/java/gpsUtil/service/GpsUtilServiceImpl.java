@@ -5,7 +5,6 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +16,8 @@ public class GpsUtilServiceImpl implements GpsUtilService {
 
     private static final Logger logger = LoggerFactory.getLogger(GpsUtilServiceImpl.class);
 
-    @Autowired
-    private static GpsUtil gpsUtil;
+
+    private final GpsUtil gpsUtil = new GpsUtil();
 
 
     @Override

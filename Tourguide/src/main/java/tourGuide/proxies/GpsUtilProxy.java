@@ -12,11 +12,10 @@ import java.util.UUID;
 @FeignClient(name = "GpsUtil_microservice", url = "localhost:8081")
 public interface GpsUtilProxy {
 
-    @GetMapping("/gpsUtil/getUserLocation/{userId}")
-    VisitedLocationBean getUserLocation(@PathVariable UUID userId);
+    @GetMapping(value = "/gpsUtil/getUserLocation/{userId}")
+    VisitedLocationBean getUserLocation(@PathVariable ("userId") UUID userId);
 
-    @GetMapping("/gpsUtil/getAttractions")
+    @GetMapping(value = "/gpsUtil/getAttractions")
     List<AttractionBean> getAttractions();
-
 
 }
