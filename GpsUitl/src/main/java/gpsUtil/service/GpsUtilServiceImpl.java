@@ -30,7 +30,6 @@ public class GpsUtilServiceImpl implements GpsUtilService {
 
     @Override
     public List<Attraction> getAttractions() {
-
         return gpsUtil.getAttractions();
     }
 

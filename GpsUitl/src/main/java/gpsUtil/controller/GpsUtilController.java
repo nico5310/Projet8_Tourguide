@@ -23,7 +23,7 @@ public class GpsUtilController {
    @Autowired
    private GpsUtilService gpsUtilService;
 
-    @GetMapping("/UserLocation/{userId}")
+    @GetMapping("/getUserLocation/{userId}")
     public VisitedLocation getUserLocation(@PathVariable UUID userId) {
 
         logger.info("Returns User Location for user: ");
@@ -31,7 +31,7 @@ public class GpsUtilController {
     }
 
 
-    @GetMapping("/attractions")
+    @RequestMapping("/getAttractions")
     public List<Attraction> getAttractions() {
 
         logger.info("Returns all Attractions");

@@ -3,11 +3,15 @@ package tourGuide;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.Locale;
+
 @SpringBootApplication
-public class Application {
+public class TourGuideApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+
+        Locale.setDefault(new Locale("en", "US"));
+        SpringApplication.run(TourGuideApplication.class, args);
     }
 
 }
