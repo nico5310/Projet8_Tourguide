@@ -38,8 +38,8 @@ public class TourGuideController {
         // Tourist attractions lat/long, 
         // The user's location lat/long, 
         // The distance in miles between the user's location and each of the attractions.
-        // The reward points for visiting each Attraction.
-        //    Note: Attraction reward points can be gathered from RewardsCentral
+        // The reward points for visiting each AttractionBean.
+        //    Note: AttractionBean reward points can be gathered from RewardsCentral
     @RequestMapping("/getNearbyAttractions") 
     public String getNearbyAttractions(@RequestParam String userName) {
         User user = getUser(userName);

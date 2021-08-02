@@ -31,7 +31,7 @@ public class GpsUtilController {
     }
 
 
-    @RequestMapping("/getAttractions")
+    @GetMapping("/getAttractions")
     public List<Attraction> getAttractions() {
 
         logger.info("Returns all Attractions");

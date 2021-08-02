@@ -2,19 +2,19 @@ package tourGuide.beans;
 
 import java.util.UUID;
 
-public class Provider {
+public class ProviderBean {
 
     private String name;
     private double price;
     private UUID   tripId;
 
-    public Provider(UUID tripId, String name, double price) {
+    public ProviderBean(UUID tripId, String name, double price) {
         this.name = name;
         this.tripId = tripId;
         this.price = price;
     }
 
-    public Provider() {
+    public ProviderBean() {
 
     }
 
@@ -51,6 +51,6 @@ public class Provider {
     @Override
     public String toString() {
 
-        return "Provider{" + "name='" + name + '\'' + ", price=" + price + ", tripId=" + tripId + '}';
+        return "ProviderBean{" + "name='" + name + '\'' + ", price=" + price + ", tripId=" + tripId + '}';
     }
 }

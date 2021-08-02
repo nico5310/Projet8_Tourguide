@@ -2,7 +2,7 @@ package tourGuide.beans;
 
 import java.util.UUID;
 
-public class TripPricerTask {
+public class TripPricerTaskBean {
 
     private UUID   attractionId;
     private String apiKey;
@@ -10,7 +10,7 @@ public class TripPricerTask {
     private int    children;
     private int    nightsStay;
 
-    public TripPricerTask(String apiKey, UUID attractionId, int adults, int children, int nightsStay) {
+    public TripPricerTaskBean(String apiKey, UUID attractionId, int adults, int children, int nightsStay) {
         this.apiKey = apiKey;
         this.attractionId = attractionId;
         this.adults = adults;
@@ -18,7 +18,7 @@ public class TripPricerTask {
         this.nightsStay = nightsStay;
     }
 
-    public TripPricerTask() {
+    public TripPricerTaskBean() {
 
     }
 
@@ -75,6 +75,6 @@ public class TripPricerTask {
     @Override
     public String toString() {
 
-        return "TripPricerTask{" + "attractionId=" + attractionId + ", apiKey='" + apiKey + '\'' + ", adults=" + adults + ", children=" + children + ", nightsStay=" + nightsStay + '}';
+        return "TripPricerTaskBean{" + "attractionId=" + attractionId + ", apiKey='" + apiKey + '\'' + ", adults=" + adults + ", children=" + children + ", nightsStay=" + nightsStay + '}';
     }
 }

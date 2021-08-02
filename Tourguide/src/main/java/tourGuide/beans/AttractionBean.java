@@ -2,14 +2,14 @@ package tourGuide.beans;
 
 import java.util.UUID;
 
-public class Attraction extends Location {
+public class AttractionBean extends LocationBean {
 
     private String attractionName;
     private String city;
     private String state;
     private UUID   attractionId;
 
-    public Attraction(String attractionName, String city, String state, double latitude, double longitude) {
+    public AttractionBean(String attractionName, String city, String state, double latitude, double longitude) {
         super(latitude, longitude);
         this.attractionName = attractionName;
         this.city = city;
@@ -60,6 +60,6 @@ public class Attraction extends Location {
     @Override
     public String toString() {
 
-        return "Attraction{" + "attractionName='" + attractionName + '\'' + ", city='" + city + '\'' + ", state='" + state + '\'' + ", attractionId=" + attractionId + '}';
+        return "AttractionBean{" + "attractionName='" + attractionName + '\'' + ", city='" + city + '\'' + ", state='" + state + '\'' + ", attractionId=" + attractionId + '}';
     }
 }
