@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import gpsUtil.service.GpsUtilService;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +17,7 @@ import java.util.UUID;
 @RequestMapping("/gpsUtil")
 public class GpsUtilController {
 
-   private static final Logger logger = LoggerFactory.getLogger(GpsUtilController.class);
+   private final Logger logger = LoggerFactory.getLogger(GpsUtilController.class);
 
    @Autowired
    private GpsUtilService gpsUtilService;
@@ -29,7 +28,6 @@ public class GpsUtilController {
         logger.info("Returns User Location for user: ");
         return gpsUtilService.getUserLocation(userId);
     }
-
 
     @GetMapping("/getAttractions")
     public List<Attraction> getAttractions() {

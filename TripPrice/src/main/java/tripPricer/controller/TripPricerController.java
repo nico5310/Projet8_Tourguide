@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tripPricer.Provider;
 import tripPricer.service.TripPricerService;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +16,7 @@ import java.util.UUID;
 @RequestMapping("/tripPricer")
 public class TripPricerController {
 
-    private static final Logger logger = LoggerFactory.getLogger(TripPricerController.class);
+    private final Logger logger = LoggerFactory.getLogger(TripPricerController.class);
 
     @Autowired
     private TripPricerService tripPricerService;
@@ -28,7 +27,5 @@ public class TripPricerController {
         logger.info("Get list of price from Providers using");
         return tripPricerService.getPrice(apiKey, attractionId, adults, children, nightsStay, rewardsPoints);
     }
-
-
 
 }

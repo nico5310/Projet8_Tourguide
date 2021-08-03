@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rewards.service.RewardsService;
-
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/rewards")
 public class RewardsController {
 
-    private static final Logger logger = LoggerFactory.getLogger(RewardsController.class);
+    private final Logger logger = LoggerFactory.getLogger(RewardsController.class);
 
     @Autowired
     private  RewardsService rewardsService;

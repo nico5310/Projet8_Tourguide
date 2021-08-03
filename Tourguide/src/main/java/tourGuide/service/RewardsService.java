@@ -11,6 +11,8 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuide.beans.AttractionBean;
+import tourGuide.beans.LocationBean;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
 
@@ -48,7 +50,7 @@ public class RewardsService {
 
 		for(VisitedLocation visitedLocation : userLocations) {
 			for(Attraction attraction : attractions) {
-				if(user.getUserRewards().stream().noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName))) {
+				if(user.getUserRewardList().stream().noneMatch(r -> r.attractionBean.attractionName.equals(attraction.attractionName))) {
 					if(nearAttraction(visitedLocation, attraction)) {
 						user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
 					}
@@ -65,15 +67,15 @@ public class RewardsService {
 		return (getDistance(attraction, visitedLocation.location) < proximityBuffer);
 	}
 	
-	public int getRewardPoints(Attraction attraction, User user) {
-		return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
+	public int getRewardPoints(AttractionBean attractionBean, User user) {
+		return rewardsCentral.getAttractionRewardPoints(attractionBean.getAttractionId(), user.getUserId());
 	}
 	
-	public double getDistance(Location loc1, Location loc2) {
-        double lat1 = Math.toRadians(loc1.latitude);
-        double lon1 = Math.toRadians(loc1.longitude);
-        double lat2 = Math.toRadians(loc2.latitude);
-        double lon2 = Math.toRadians(loc2.longitude);
+	public double getDistance(LocationBean loc1, LocationBean loc2) {
+        double lat1 = Math.toRadians(loc1.getLatitude());
+        double lon1 = Math.toRadians(loc1.getLongitude());
+        double lat2 = Math.toRadians(loc2.getLatitude());
+        double lon2 = Math.toRadians(loc2.getLongitude());
 
         double angle = Math.acos(Math.sin(lat1) * Math.sin(lat2)
                                + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2));

@@ -1,23 +1,25 @@
 package tourGuide.user;
 
+import tourGuide.beans.ProviderBean;
+import tourGuide.beans.VisitedLocationBean;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import gpsUtil.location.VisitedLocation;
-import tripPricer.Provider;
-
 public class User {
-	private final UUID userId;
-	private final String userName;
-	private String phoneNumber;
-	private String emailAddress;
-	private Date latestLocationTimestamp;
-	private List<VisitedLocation> visitedLocations = new ArrayList<>();
-	private List<UserReward> userRewards = new ArrayList<>();
-	private UserPreferences userPreferences = new UserPreferences();
-	private List<Provider> tripDeals = new ArrayList<>();
+	private final UUID                      userId;
+	private final String                    userName;
+	private       String                    phoneNumber;
+	private       String                    emailAddress;
+	private       Date                      latestLocationTimestamp;
+	private final List<VisitedLocationBean> visitedLocationBeanList = new ArrayList<>();
+	private final List<UserReward>          userRewardList          = new ArrayList<>();
+	private       UserPreferences           userPreferences         = new UserPreferences();
+	private       List<ProviderBean>        tripDealsBeans          = new ArrayList<>();
+
+
 	public User(UUID userId, String userName, String phoneNumber, String emailAddress) {
 		this.userId = userId;
 		this.userName = userName;
@@ -56,27 +58,31 @@ public class User {
 	public Date getLatestLocationTimestamp() {
 		return latestLocationTimestamp;
 	}
-	
-	public void addToVisitedLocations(VisitedLocation visitedLocation) {
-		visitedLocations.add(visitedLocation);
+
+
+	//Method
+
+	public void addToVisitedLocations(VisitedLocationBean visitedLocationBean) {
+		visitedLocationBeanList.add(visitedLocationBean);
 	}
 	
-	public List<VisitedLocation> getVisitedLocations() {
-		return visitedLocations;
+	public List<VisitedLocationBean> getVisitedLocations() {
+		return visitedLocationBeanList;
 	}
 	
 	public void clearVisitedLocations() {
-		visitedLocations.clear();
+		visitedLocationBeanList.clear();
 	}
-	
+
+
 	public void addUserReward(UserReward userReward) {
-		if(userRewards.stream().noneMatch(r -> r.attraction.attractionName.equals(userReward.attraction.attractionName))) {
-			userRewards.add(userReward);
+		if(userRewardList.stream().noneMatch(r -> r.attractionBean.getAttractionName().equals(userReward.attractionBean.getAttractionName()))) {
+			userRewardList.add(userReward);
 		}
 	}
 	
-	public List<UserReward> getUserRewards() {
-		return userRewards;
+	public List<UserReward> getUserRewardList() {
+		return userRewardList;
 	}
 	
 	public UserPreferences getUserPreferences() {
@@ -87,16 +93,16 @@ public class User {
 		this.userPreferences = userPreferences;
 	}
 
-	public VisitedLocation getLastVisitedLocation() {
-		return visitedLocations.get(visitedLocations.size() - 1);
+	public VisitedLocationBean getLastVisitedLocation() {
+		return visitedLocationBeanList.get(visitedLocationBeanList.size() - 1);
 	}
 	
-	public void setTripDeals(List<Provider> tripDeals) {
-		this.tripDeals = tripDeals;
+	public void setTripDealsBeans(List<ProviderBean> tripDealsBeans) {
+		this.tripDealsBeans = tripDealsBeans;
 	}
 	
-	public List<Provider> getTripDeals() {
-		return tripDeals;
+	public List<ProviderBean> getTripDealsBeans() {
+		return tripDealsBeans;
 	}
 
 }
