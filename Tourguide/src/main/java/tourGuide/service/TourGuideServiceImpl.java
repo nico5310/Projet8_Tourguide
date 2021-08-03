@@ -2,7 +2,6 @@ package tourGuide.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tourGuide.beans.AttractionBean;
 import tourGuide.beans.LocationBean;
@@ -27,17 +26,17 @@ public class TourGuideServiceImpl implements TourGuideService {
 
     private final Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 
-    @Autowired
+
     private GpsUtilProxy gpsUtilProxy;
 
-    @Autowired
     private RewardsProxy rewardsProxy;
 
-    @Autowired
     private TripPriceProxy tripPriceProxy;
 
-    private final RewardsService rewardsService;
-    public final Tracker tracker;
+    private  RewardsService rewardsService;
+
+    public Tracker tracker;
+
     boolean testMode = true;
 
 
@@ -89,7 +88,7 @@ public class TourGuideServiceImpl implements TourGuideService {
     public List<ProviderBean> getTripDeals(User user) {
 
         int cumulatativeRewardPoints = user.getUserRewardList().stream().mapToInt(i -> i.getRewardPoints()).sum();
-        List<ProviderBean> providerBeanList = tripPricer.getPrice(
+        List<ProviderBean> providerBeanList = tripPriceProxy.getPrice(
                 tripPricerApiKey,
                 user.getUserId(),
                 user.getUserPreferences().getNumberOfAdults(),

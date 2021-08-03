@@ -1,28 +1,25 @@
 package tourGuide.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import gpsUtil.GpsUtil;
-import rewardCentral.RewardCentral;
+import tourGuide.proxies.GpsUtilProxy;
+import tourGuide.proxies.RewardsProxy;
 import tourGuide.service.RewardsService;
 
 @Configuration
 public class TourGuideModule {
-	
-	@Bean
-	public GpsUtil getGpsUtil() {
-		return new GpsUtil();
-	}
-	
+
+	@Autowired
+	GpsUtilProxy gpsUtilProxy;
+
+	@Autowired
+	RewardsProxy rewardsProxy;
+
 	@Bean
 	public RewardsService getRewardsService() {
-		return new RewardsService(getGpsUtil(), getRewardCentral());
+		return new RewardsService(gpsUtilProxy, rewardsProxy);
 	}
-	
-	@Bean
-	public RewardCentral getRewardCentral() {
-		return new RewardCentral();
-	}
+
 	
 }
