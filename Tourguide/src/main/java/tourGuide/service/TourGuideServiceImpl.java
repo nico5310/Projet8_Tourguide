@@ -33,16 +33,16 @@ public class TourGuideServiceImpl implements TourGuideService {
 
     private TripPriceProxy tripPriceProxy;
 
-    private  RewardsService rewardsService;
+    private RewardsServiceImpl rewardsServiceImpl;
 
     public Tracker tracker;
 
     boolean testMode = true;
 
 
-    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsService rewardsService) {
-        this.gpsUtilProxy   = gpsUtilProxy;
-        this.rewardsService = rewardsService;
+    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsServiceImpl rewardsServiceImpl) {
+        this.gpsUtilProxy       = gpsUtilProxy;
+        this.rewardsServiceImpl = rewardsServiceImpl;
 
         if (testMode) {
             logger.info("TestMode enabled");
@@ -54,13 +54,13 @@ public class TourGuideServiceImpl implements TourGuideService {
         addShutDownHook();
     }
 
-
+    @Override
     public List<UserReward> getUserRewards(User user) {
 
         return user.getUserRewardList();
     }
 
-
+    @Override
     public VisitedLocationBean getUserLocation(User user) {
 
         VisitedLocationBean visitedLocationBean = (user.getVisitedLocations()
@@ -68,16 +68,19 @@ public class TourGuideServiceImpl implements TourGuideService {
         return visitedLocationBean;
     }
 
+    @Override
     public User getUser(String userName) {
 
         return internalUserMap.get(userName);
     }
 
+    @Override
     public List<User> getAllUsers() {
 
         return new ArrayList<>(internalUserMap.values());
     }
 
+    @Override
     public void addUser(User user) {
 
         if (!internalUserMap.containsKey(user.getUserName())) {
@@ -85,6 +88,7 @@ public class TourGuideServiceImpl implements TourGuideService {
         }
     }
 
+    @Override
     public List<ProviderBean> getTripDeals(User user) {
 
         int cumulatativeRewardPoints = user.getUserRewardList().stream().mapToInt(i -> i.getRewardPoints()).sum();
@@ -99,19 +103,21 @@ public class TourGuideServiceImpl implements TourGuideService {
         return providerBeanList;
     }
 
+    @Override
     public VisitedLocationBean trackUserLocation(User user) {
 
         VisitedLocationBean visitedLocationBean = gpsUtilProxy.getUserLocation(user.getUserId());
         user.addToVisitedLocations(visitedLocationBean);
-        rewardsService.calculateRewards(user);
+        rewardsServiceImpl.calculateRewards(user);
         return visitedLocationBean;
     }
 
+    @Override
     public List<NearByAttractionDto> getNearByAttractions(VisitedLocationBean visitedLocationBean, User user) {
 
         TreeMap<Double, NearByAttractionDto> distanceUserToAttractionList = new TreeMap<>();
         for (AttractionBean attractionBean : gpsUtilProxy.getAttractions()) {
-            double              distance            = rewardsService.getDistance(visitedLocationBean.getLocation(), attractionBean);
+            double              distance            = rewardsServiceImpl.getDistance(visitedLocationBean.getLocation(), attractionBean);
             NearByAttractionDto nearByAttractionDto = new NearByAttractionDto();
             nearByAttractionDto.setAttractionName(attractionBean.getAttractionName());
             nearByAttractionDto.setAttractionLongitude(attractionBean.getLongitude());
@@ -119,7 +125,7 @@ public class TourGuideServiceImpl implements TourGuideService {
             nearByAttractionDto.setUserLongitude(visitedLocationBean.getLocation().getLongitude());
             nearByAttractionDto.setUserLatitude(visitedLocationBean.getLocation().getLatitude());
             nearByAttractionDto.setDistance(distance);
-            nearByAttractionDto.setRewardPoints(rewardsService.getRewardPoints(attractionBean, user));
+            nearByAttractionDto.setRewardPoints(rewardsServiceImpl.getRewardPoints(attractionBean, user));
             distanceUserToAttractionList.put(distance, nearByAttractionDto);
         }
         Set<Map.Entry<Double, NearByAttractionDto>> entrySet            = distanceUserToAttractionList.entrySet();
