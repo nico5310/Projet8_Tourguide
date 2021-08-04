@@ -1,16 +1,16 @@
 package tourGuide.controller;
 
 import com.jsoniter.output.JsonStream;
-import gpsUtil.location.VisitedLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import tourGuide.service.TourGuideServiceImpl;
+import tourGuide.beans.ProviderBean;
+import tourGuide.beans.VisitedLocationBean;
+import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
-import tripPricer.Provider;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class TourGuideController {
     private static final Logger logger = LoggerFactory.getLogger(TourGuideController.class);
 
 	@Autowired
-    TourGuideServiceImpl tourGuideServiceImpl;
+    private TourGuideService tourGuideService;
 	
     @RequestMapping("/")
     public String index() {
@@ -29,8 +29,8 @@ public class TourGuideController {
     
     @RequestMapping("/getLocation") 
     public String getLocation(@RequestParam String userName) {
-    	VisitedLocation visitedLocation = tourGuideServiceImpl.getUserLocation(getUser(userName));
-		return JsonStream.serialize(visitedLocation.location);
+    	VisitedLocationBean visitedLocationBean = tourGuideService.getUserLocation(getUser(userName));
+		return JsonStream.serialize(visitedLocationBean.getLocation());
     }
     
     //  TODO: Change this method to no longer return a List of Attractions.
@@ -45,13 +45,13 @@ public class TourGuideController {
     @RequestMapping("/getNearbyAttractions") 
     public String getNearbyAttractions(@RequestParam String userName) {
         User user = getUser(userName);
-        VisitedLocation visitedLocation = tourGuideServiceImpl.getUserLocation(getUser(userName));
-        return JsonStream.serialize(tourGuideServiceImpl.getNearByAttractions(visitedLocation, user));
+        VisitedLocationBean visitedLocationBean = tourGuideService.getUserLocation(getUser(userName));
+        return JsonStream.serialize(tourGuideService.getNearByAttractions(visitedLocationBean, user));
     }
     
     @RequestMapping("/getRewards") 
     public String getRewards(@RequestParam String userName) {
-    	return JsonStream.serialize(tourGuideServiceImpl.getUserRewards(getUser(userName)));
+    	return JsonStream.serialize(tourGuideService.getUserRewards(getUser(userName)));
     }
     
     @RequestMapping("/getAllCurrentLocations")
@@ -71,12 +71,12 @@ public class TourGuideController {
     
     @RequestMapping("/getTripDeals")
     public String getTripDeals(@RequestParam String userName) {
-    	List<Provider> providers = tourGuideServiceImpl.getTripDeals(getUser(userName));
-    	return JsonStream.serialize(providers);
+    	List<ProviderBean> providerBeanList = tourGuideService.getTripDeals(getUser(userName));
+    	return JsonStream.serialize(providerBeanList);
     }
     
     private User getUser(String userName) {
-    	return tourGuideServiceImpl.getUser(userName);
+    	return tourGuideService.getUser(userName);
     }
    
 
