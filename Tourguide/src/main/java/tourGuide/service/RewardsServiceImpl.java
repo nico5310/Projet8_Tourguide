@@ -37,6 +37,7 @@ public class RewardsServiceImpl implements RewardsService {
 		proximityBuffer = defaultProximityBuffer;
 	}
 
+	@Override
 	public void calculateRewards(User user) {
 		List<VisitedLocationBean> userLocationBeanList = new ArrayList<>(user.getVisitedLocations());
 		List<AttractionBean>          attractionBeanList   = gpsUtilProxy.getAttractions();
@@ -51,19 +52,23 @@ public class RewardsServiceImpl implements RewardsService {
 			}
 		}
 	}
-	
+
+	@Override
 	public boolean isWithinAttractionProximity(AttractionBean attractionBean, LocationBean locationBean) {
 		return (getDistance(attractionBean, locationBean) < attractionProximityRange);
 	}
-	
-	private boolean nearAttraction(VisitedLocationBean visitedLocationBean, AttractionBean attractionBean) {
+
+	@Override
+	public boolean nearAttraction(VisitedLocationBean visitedLocationBean, AttractionBean attractionBean) {
 		return (getDistance(attractionBean, visitedLocationBean.getLocation()) < proximityBuffer);
 	}
-	
+
+	@Override
 	public int getRewardPoints(AttractionBean attractionBean, User user) {
 		return rewardsProxy.getAttractionRewardPoints(attractionBean.getAttractionId(), user.getUserId());
 	}
-	
+
+	@Override
 	public double getDistance(LocationBean loc1, LocationBean loc2) {
         double lat1 = Math.toRadians(loc1.getLatitude());
         double lon1 = Math.toRadians(loc1.getLongitude());

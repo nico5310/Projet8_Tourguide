@@ -15,7 +15,7 @@ public interface RewardsService {
 
     int getRewardPoints(AttractionBean attractionBean, User user);
 
-    Double getDistance(LocationBean loc1, LocationBean loc2);
+    double getDistance(LocationBean loc1, LocationBean loc2);
 
 
 }
