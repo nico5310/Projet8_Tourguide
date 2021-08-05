@@ -13,7 +13,7 @@ public interface TourGuideService {
 
     List<UserReward> getUserRewards(User user);
 
-    VisitedLocationBean getUserLocation(User user);
+    VisitedLocationBean getUserLocation(String userName);
 
     User getUser(String userName);
 

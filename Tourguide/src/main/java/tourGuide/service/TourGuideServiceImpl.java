@@ -8,6 +8,7 @@ import tourGuide.beans.LocationBean;
 import tourGuide.beans.ProviderBean;
 import tourGuide.beans.VisitedLocationBean;
 import tourGuide.dto.NearByAttractionDto;
+import tourGuide.exception.UserNotFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.proxies.GpsUtilProxy;
 import tourGuide.proxies.RewardsProxy;
@@ -40,8 +41,10 @@ public class TourGuideServiceImpl implements TourGuideService {
     boolean testMode = true;
 
 
-    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsServiceImpl rewardsServiceImpl) {
+    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsProxy rewardsProxy,TripPriceProxy tripPriceProxy, RewardsServiceImpl rewardsServiceImpl) {
         this.gpsUtilProxy       = gpsUtilProxy;
+        this.rewardsProxy       = rewardsProxy;
+        this.tripPriceProxy       = tripPriceProxy ;
         this.rewardsServiceImpl = rewardsServiceImpl;
 
         if (testMode) {
@@ -61,17 +64,30 @@ public class TourGuideServiceImpl implements TourGuideService {
     }
 
     @Override
-    public VisitedLocationBean getUserLocation(User user) {
+    public VisitedLocationBean getUserLocation(String userName) {
 
-        VisitedLocationBean visitedLocationBean = (user.getVisitedLocations()
-                                               .size() > 0) ? user.getLastVisitedLocation() : trackUserLocation(user);
-        return visitedLocationBean;
+        List<VisitedLocationBean> visitedLocationBeanList = getUser(userName).getVisitedLocations();
+        if (visitedLocationBeanList.isEmpty()) {
+            logger.error("Error, The user list VisitedLocation is Empty");
+            return null;
+        } else {
+            logger.info("Getting current user visited location");
+            return visitedLocationBeanList.get(visitedLocationBeanList.size()-1);
+        }
+
     }
 
     @Override
     public User getUser(String userName) {
+        User user = internalUserMap.get(userName);
+        if (user != null) {
+            logger.info("User found");
+            return user;
 
-        return internalUserMap.get(userName);
+        }else {
+            logger.error("Error, User do not exist");
+            throw new UserNotFoundException(userName);
+        }
     }
 
     @Override
