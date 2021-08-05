@@ -1,5 +1,7 @@
 package tourGuide.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tourGuide.beans.AttractionBean;
 import tourGuide.beans.LocationBean;
@@ -14,16 +16,24 @@ import java.util.List;
 
 @Service
 public class RewardsServiceImpl implements RewardsService {
-    private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 
+	private static final Logger logger = LoggerFactory.getLogger(RewardsService.class);
+
+
+    private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 	// proximity in miles
     private int defaultProximityBuffer = 10;
-	private int proximityBuffer = defaultProximityBuffer;
-	private int attractionProximityRange = 200;
+
+    private int proximityBuffer = defaultProximityBuffer;
+
+    private int attractionProximityRange = 200;
 
 	private GpsUtilProxy gpsUtilProxy;
+
 	private RewardsProxy rewardsProxy;
-	
+
+
+
 	public RewardsServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsProxy rewardsProxy) {
 		this.gpsUtilProxy = gpsUtilProxy;
 		this.rewardsProxy = rewardsProxy;
