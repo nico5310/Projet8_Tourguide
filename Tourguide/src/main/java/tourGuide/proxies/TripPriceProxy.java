@@ -8,7 +8,7 @@ import tourGuide.beans.ProviderBean;
 import java.util.List;
 import java.util.UUID;
 
-@FeignClient(name = "TripPrice_microservice", url = "localhost:8083")
+@FeignClient(name = "TripPrice-microservice", url = "localhost:8083")
 public interface TripPriceProxy {
 
     @GetMapping("/getPrice/{apiKey}/{attractionId}/{adults}/{children}/{nightsStay}/{rewardsPoints}")
