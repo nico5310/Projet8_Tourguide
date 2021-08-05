@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tourGuide.beans.ProviderBean;
 import tourGuide.beans.VisitedLocationBean;
+import tourGuide.dto.NearByAttractionDto;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 
@@ -30,13 +31,13 @@ public class TourGuideController {
     }
 
     @RequestMapping("/getNearbyAttractions")
-    public String getNearbyAttractions(@RequestParam String userName) {
+    public List<NearByAttractionDto> getNearbyAttractions(@RequestParam String userName) {
         User user = getUser(userName);
-        VisitedLocationBean visitedLocationBean = tourGuideService.getUserLocation(getUser(userName));
-        return JsonStream.serialize(tourGuideService.getNearByAttractions(visitedLocationBean, user));
+        VisitedLocationBean visitedLocationBean = tourGuideService.getUserLocation(userName);
+        return tourGuideService.getNearByAttractions(visitedLocationBean, user);
     }
     
-    @RequestMapping("/getRewards") 
+    @RequestMapping("/getRewards")
     public String getRewards(@RequestParam String userName) {
     	return JsonStream.serialize(tourGuideService.getUserRewards(getUser(userName)));
     }
@@ -61,7 +62,7 @@ public class TourGuideController {
     	List<ProviderBean> providerBeanList = tourGuideService.getTripDeals(getUser(userName));
     	return JsonStream.serialize(providerBeanList);
     }
-    
+
     private User getUser(String userName) {
     	return tourGuideService.getUser(userName);
     }

@@ -81,11 +81,11 @@ public class TourGuideServiceImpl implements TourGuideService {
     public User getUser(String userName) {
         User user = internalUserMap.get(userName);
         if (user != null) {
-            logger.info("User found");
+            logger.info("User: " + userName + " is found");
             return user;
 
         }else {
-            logger.error("Error, User do not exist");
+            logger.error("Error, User : " + userName + " is not found");
             throw new UserNotFoundException(userName);
         }
     }

@@ -13,13 +13,11 @@ import java.util.UUID;
 @RequestMapping("/rewards")
 public class RewardsController {
 
-
-
     @Autowired
     private  RewardsService rewardsService;
 
     @GetMapping ("/getAttractionRewardPoints/{attractionId}/{userId}")
-    public int getAttractionRewardPoints(@PathVariable UUID attractionId, @PathVariable UUID userId) {
+    public int getAttractionRewardPoints(@PathVariable ("attractionId")  UUID attractionId, @PathVariable ("userId") UUID userId) {
 
         return rewardsService.getAttractionRewardPoints(attractionId, userId);
     }

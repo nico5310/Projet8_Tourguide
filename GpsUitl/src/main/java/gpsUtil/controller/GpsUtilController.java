@@ -17,7 +17,6 @@ import java.util.UUID;
 public class GpsUtilController {
 
 
-
    @Autowired
    private GpsUtilService gpsUtilService;
 
