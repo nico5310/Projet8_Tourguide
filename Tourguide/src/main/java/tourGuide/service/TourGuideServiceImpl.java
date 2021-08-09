@@ -7,6 +7,7 @@ import tourGuide.beans.AttractionBean;
 import tourGuide.beans.LocationBean;
 import tourGuide.beans.ProviderBean;
 import tourGuide.beans.VisitedLocationBean;
+import tourGuide.dto.AllUsersCurrentLocations;
 import tourGuide.dto.NearByAttractionDto;
 import tourGuide.exception.UserNotFoundException;
 import tourGuide.helper.InternalTestHelper;
@@ -41,10 +42,11 @@ public class TourGuideServiceImpl implements TourGuideService {
     boolean testMode = true;
 
 
-    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsProxy rewardsProxy,TripPriceProxy tripPriceProxy, RewardsServiceImpl rewardsServiceImpl) {
+    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsProxy rewardsProxy, TripPriceProxy tripPriceProxy, RewardsServiceImpl rewardsServiceImpl) {
+
         this.gpsUtilProxy       = gpsUtilProxy;
         this.rewardsProxy       = rewardsProxy;
-        this.tripPriceProxy       = tripPriceProxy ;
+        this.tripPriceProxy     = tripPriceProxy;
         this.rewardsServiceImpl = rewardsServiceImpl;
 
         if (testMode) {
@@ -58,12 +60,6 @@ public class TourGuideServiceImpl implements TourGuideService {
     }
 
     @Override
-    public List<UserReward> getUserRewards(User user) {
-
-        return user.getUserRewardList();
-    }
-
-    @Override
     public VisitedLocationBean getUserLocation(String userName) {
 
         List<VisitedLocationBean> visitedLocationBeanList = getUser(userName).getVisitedLocations();
@@ -72,65 +68,15 @@ public class TourGuideServiceImpl implements TourGuideService {
             return null;
         } else {
             logger.info("Getting current user visited location");
-            return visitedLocationBeanList.get(visitedLocationBeanList.size()-1);
+            return visitedLocationBeanList.get(visitedLocationBeanList.size() - 1);
         }
 
-    }
-
-    @Override
-    public User getUser(String userName) {
-        User user = internalUserMap.get(userName);
-        if (user != null) {
-            logger.info("User: " + userName + " is found");
-            return user;
-
-        }else {
-            logger.error("Error, User : " + userName + " is not found");
-            throw new UserNotFoundException(userName);
-        }
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-
-        return new ArrayList<>(internalUserMap.values());
-    }
-
-    @Override
-    public void addUser(User user) {
-
-        if (!internalUserMap.containsKey(user.getUserName())) {
-            internalUserMap.put(user.getUserName(), user);
-        }
-    }
-
-    @Override
-    public List<ProviderBean> getTripDeals(User user) {
-
-        int cumulatativeRewardPoints = user.getUserRewardList().stream().mapToInt(i -> i.getRewardPoints()).sum();
-        List<ProviderBean> providerBeanList = tripPriceProxy.getPrice(
-                tripPricerApiKey,
-                user.getUserId(),
-                user.getUserPreferences().getNumberOfAdults(),
-                user.getUserPreferences().getNumberOfChildren(),
-                user.getUserPreferences().getTripDuration(),
-                cumulatativeRewardPoints);
-        user.setTripDealsBeans(providerBeanList);
-        return providerBeanList;
-    }
-
-    @Override
-    public VisitedLocationBean trackUserLocation(User user) {
-
-        VisitedLocationBean visitedLocationBean = gpsUtilProxy.getUserLocation(user.getUserId());
-        user.addToVisitedLocations(visitedLocationBean);
-        rewardsServiceImpl.calculateRewards(user);
-        return visitedLocationBean;
     }
 
     @Override
     public List<NearByAttractionDto> getNearByAttractions(VisitedLocationBean visitedLocationBean, User user) {
 
+        logger.info("Getting 5 near attractions for " + user);
         TreeMap<Double, NearByAttractionDto> distanceUserToAttractionList = new TreeMap<>();
         for (AttractionBean attractionBean : gpsUtilProxy.getAttractions()) {
             double              distance            = rewardsServiceImpl.getDistance(visitedLocationBean.getLocation(), attractionBean);
@@ -156,6 +102,79 @@ public class TourGuideServiceImpl implements TourGuideService {
         }
         return nearFiveAttractions;
     }
+
+    @Override
+    public List<UserReward> getUserRewards(User user) {
+
+        //        rewardsServiceImpl.calculateRewards(user);
+        return user.getUserRewardList();
+    }
+
+    @Override
+    public User getUser(String userName) {
+
+        User user = internalUserMap.get(userName);
+        if (user != null) {
+            logger.info("User: " + userName + " is found");
+            return user;
+
+        } else {
+            logger.error("Error, User : " + userName + " is not found");
+            throw new UserNotFoundException(userName);
+        }
+    }
+
+
+    @Override
+    public void addUser(User user) {
+
+        if (!internalUserMap.containsKey(user.getUserName())) {
+            internalUserMap.put(user.getUserName(), user);
+        }
+    }
+
+    @Override
+    public List<AllUsersCurrentLocations> getAllCurrentLocations() {
+
+        List<User> userList = getAllUsers();
+        List<AllUsersCurrentLocations> currentLocationsList = new ArrayList<>();
+
+        for (User user : userList) {
+            generateUserLocationHistory(user);
+            VisitedLocationBean      lastVisitedLocation = user.getLastVisitedLocation();
+            AllUsersCurrentLocations currentLocations    = new AllUsersCurrentLocations(lastVisitedLocation.getUserId(), lastVisitedLocation.getLocation().getLongitude(), lastVisitedLocation.getLocation().getLatitude());
+            currentLocationsList.add(currentLocations);
+        }
+        return currentLocationsList;
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+
+        return new ArrayList<>(internalUserMap.values());
+    }
+
+
+    @Override
+    public List<ProviderBean> getTripDeals(User user) {
+
+        int cumulatativeRewardPoints = user.getUserRewardList().stream().mapToInt(i -> i.getRewardPoints()).sum();
+        List<ProviderBean> providerBeanList = tripPriceProxy.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(), user
+                .getUserPreferences()
+                .getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
+        user.setTripDealsBeans(providerBeanList);
+        return providerBeanList;
+    }
+
+    @Override
+    public VisitedLocationBean trackUserLocation(User user) {
+
+        VisitedLocationBean visitedLocationBean = gpsUtilProxy.getUserLocation(user.getUserId());
+        user.addToVisitedLocations(visitedLocationBean);
+        rewardsServiceImpl.calculateRewards(user);
+        return visitedLocationBean;
+    }
+
 
     private void addShutDownHook() {
 
