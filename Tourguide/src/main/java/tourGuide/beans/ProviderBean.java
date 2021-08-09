@@ -4,13 +4,14 @@ import java.util.UUID;
 
 public class ProviderBean {
 
+    private UUID   tripId;
     private String name;
     private double price;
-    private UUID   tripId;
+
 
     public ProviderBean(UUID tripId, String name, double price) {
-        this.name = name;
         this.tripId = tripId;
+        this.name = name;
         this.price = price;
     }
 
@@ -51,6 +52,6 @@ public class ProviderBean {
     @Override
     public String toString() {
 
-        return "ProviderBean{" + "name='" + name + '\'' + ", price=" + price + ", tripId=" + tripId + '}';
+        return "ProviderBean{" + "tripId=" + tripId + ", name='" + name + '\'' + ", price=" + price + '}';
     }
 }

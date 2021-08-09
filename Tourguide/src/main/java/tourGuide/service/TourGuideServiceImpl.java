@@ -16,6 +16,7 @@ import tourGuide.proxies.RewardsProxy;
 import tourGuide.proxies.TripPriceProxy;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
+import tourGuide.user.UserPreferences;
 import tourGuide.user.UserReward;
 
 import java.time.LocalDateTime;
@@ -64,10 +65,10 @@ public class TourGuideServiceImpl implements TourGuideService {
 
         List<VisitedLocationBean> visitedLocationBeanList = getUser(userName).getVisitedLocations();
         if (visitedLocationBeanList.isEmpty()) {
-            logger.error("Error, The user list VisitedLocation is Empty");
+            logger.error("Error, The user list VisitedLocation is Empty for :" + userName);
             return null;
         } else {
-            logger.info("Getting current user visited location");
+            logger.info("Getting current user visited location for :" + userName );
             return visitedLocationBeanList.get(visitedLocationBeanList.size() - 1);
         }
 
@@ -103,12 +104,53 @@ public class TourGuideServiceImpl implements TourGuideService {
         return nearFiveAttractions;
     }
 
+    // Controller getRewards Method
     @Override
     public List<UserReward> getUserRewards(User user) {
 
+        logger.info("Getting rewards for : " + user);
         //        rewardsServiceImpl.calculateRewards(user);
         return user.getUserRewardList();
     }
+
+    // Controller getAllCurrentLocations Method
+    @Override
+    public List<AllUsersCurrentLocations> getAllCurrentLocations() {
+
+        List<User> userList = getAllUsers();
+        List<AllUsersCurrentLocations> currentLocationsList = new ArrayList<>();
+        for (User user : userList) {
+            generateUserLocationHistory(user);
+            VisitedLocationBean      lastVisitedLocation = user.getLastVisitedLocation();
+            AllUsersCurrentLocations allUsersCurrentLocations    = new AllUsersCurrentLocations(lastVisitedLocation.getUserId(), lastVisitedLocation.getLocation().getLongitude(), lastVisitedLocation.getLocation().getLatitude());
+            currentLocationsList.add(allUsersCurrentLocations);
+        }
+        logger.info("Getting all users locations");
+        return currentLocationsList;
+    }
+
+    // Controller getTripDeals Method
+    @Override
+    public List<ProviderBean> getTripDeals(User user, int tripDuration, int numberOfAdults, int numberOfChildren) {
+
+        int cumulatativeRewardPoints = user.getUserRewardList().stream().mapToInt(i -> i.getRewardPoints()).sum();
+        UserPreferences userPreferences = new UserPreferences();
+        userPreferences.setTripDuration(tripDuration);
+        userPreferences.setNumberOfAdults(numberOfAdults);
+        userPreferences.setNumberOfChildren(numberOfChildren);
+        user.setUserPreferences(userPreferences);
+
+        List<ProviderBean> providerBeanList = tripPriceProxy.getPrice(
+                tripPricerApiKey,
+                user.getUserId(),
+                user.getUserPreferences().getNumberOfAdults(),
+                user.getUserPreferences().getNumberOfChildren(),
+                user.getUserPreferences().getTripDuration(),
+                cumulatativeRewardPoints);
+        user.setTripDealsBeans(providerBeanList);
+        return providerBeanList;
+    }
+
 
     @Override
     public User getUser(String userName) {
@@ -117,35 +159,10 @@ public class TourGuideServiceImpl implements TourGuideService {
         if (user != null) {
             logger.info("User: " + userName + " is found");
             return user;
-
         } else {
             logger.error("Error, User : " + userName + " is not found");
             throw new UserNotFoundException(userName);
         }
-    }
-
-
-    @Override
-    public void addUser(User user) {
-
-        if (!internalUserMap.containsKey(user.getUserName())) {
-            internalUserMap.put(user.getUserName(), user);
-        }
-    }
-
-    @Override
-    public List<AllUsersCurrentLocations> getAllCurrentLocations() {
-
-        List<User> userList = getAllUsers();
-        List<AllUsersCurrentLocations> currentLocationsList = new ArrayList<>();
-
-        for (User user : userList) {
-            generateUserLocationHistory(user);
-            VisitedLocationBean      lastVisitedLocation = user.getLastVisitedLocation();
-            AllUsersCurrentLocations currentLocations    = new AllUsersCurrentLocations(lastVisitedLocation.getUserId(), lastVisitedLocation.getLocation().getLongitude(), lastVisitedLocation.getLocation().getLatitude());
-            currentLocationsList.add(currentLocations);
-        }
-        return currentLocationsList;
     }
 
     @Override
@@ -154,16 +171,12 @@ public class TourGuideServiceImpl implements TourGuideService {
         return new ArrayList<>(internalUserMap.values());
     }
 
-
     @Override
-    public List<ProviderBean> getTripDeals(User user) {
+    public void addUser(User user) {
 
-        int cumulatativeRewardPoints = user.getUserRewardList().stream().mapToInt(i -> i.getRewardPoints()).sum();
-        List<ProviderBean> providerBeanList = tripPriceProxy.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(), user
-                .getUserPreferences()
-                .getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
-        user.setTripDealsBeans(providerBeanList);
-        return providerBeanList;
+        if (!internalUserMap.containsKey(user.getUserName())) {
+            internalUserMap.put(user.getUserName(), user);
+        }
     }
 
     @Override

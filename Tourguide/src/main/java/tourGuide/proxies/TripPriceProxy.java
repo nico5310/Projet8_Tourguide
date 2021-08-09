@@ -11,7 +11,7 @@ import java.util.UUID;
 @FeignClient(name = "TripPrice-microservice", url = "localhost:8083")
 public interface TripPriceProxy {
 
-    @GetMapping("/getPrice/{apiKey}/{attractionId}/{adults}/{children}/{nightsStay}/{rewardsPoints}")
+    @GetMapping("/tripPricer/getPrice/{apiKey}/{attractionId}/{adults}/{children}/{nightsStay}/{rewardsPoints}")
     List<ProviderBean> getPrice(@PathVariable String apiKey, @PathVariable UUID attractionId, @PathVariable int adults, @PathVariable int children, @PathVariable int nightsStay, @PathVariable int rewardsPoints);
 
 }

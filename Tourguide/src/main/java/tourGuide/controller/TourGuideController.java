@@ -1,6 +1,7 @@
 package tourGuide.controller;
 
-import com.jsoniter.output.JsonStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,8 @@ import java.util.List;
 @RestController
 public class TourGuideController {
 
+    private final Logger logger = LoggerFactory.getLogger(TourGuideController.class);
+
 	@Autowired
     private TourGuideService tourGuideService;
 	
@@ -29,12 +32,14 @@ public class TourGuideController {
     @RequestMapping("/getLocation")
     public VisitedLocationBean getLocation(@RequestParam String userName) {
 
+        logger.info("getLocation for :" + userName);
         return tourGuideService.getUserLocation(userName);
     }
 
     @RequestMapping("/getNearbyAttractions")
     public List<NearByAttractionDto> getNearbyAttractions(@RequestParam String userName) {
 
+        logger.info("getNearByAttractions for :" + userName);
         User user = tourGuideService.getUser(userName);
         VisitedLocationBean visitedLocationBean = tourGuideService.getUserLocation(userName);
         return tourGuideService.getNearByAttractions(visitedLocationBean, user);
@@ -43,19 +48,23 @@ public class TourGuideController {
     @RequestMapping("/getRewards")
     public List<UserReward> getRewards(@RequestParam String userName) {
 
+        logger.info("getRewards for :" + userName);
     	return tourGuideService.getUserRewards(tourGuideService.getUser(userName));
     }
     
     @RequestMapping("/getAllCurrentLocations")
     public List<AllUsersCurrentLocations> getAllCurrentLocations() {
 
+        logger.info("getAllCurrentLocations");
         return tourGuideService.getAllCurrentLocations();
     }
     
     @RequestMapping("/getTripDeals")
-    public String getTripDeals(@RequestParam String userName) {
-    	List<ProviderBean> providerBeanList = tourGuideService.getTripDeals(tourGuideService.getUser(userName));
-    	return JsonStream.serialize(providerBeanList);
+    public List<ProviderBean> getTripDeals(@RequestParam String userName, @RequestParam int tripDuration, @RequestParam int numberOfAdults, @RequestParam int numberOfChildren) {
+
+        logger.info("getTripDeals for :" + userName + tripDuration + numberOfAdults + numberOfChildren);
+    	List<ProviderBean> providerBeanList = tourGuideService.getTripDeals(tourGuideService.getUser(userName), tripDuration, numberOfAdults, numberOfChildren);
+    	return providerBeanList;
     }
 
 

@@ -15,21 +15,20 @@ public interface TourGuideService {
 
     List<NearByAttractionDto> getNearByAttractions(VisitedLocationBean visitedLocationBean, User user);
 
-
     List<UserReward> getUserRewards(User user);
-
-    User getUser(String userName);
-
 
     List<AllUsersCurrentLocations> getAllCurrentLocations();
 
+    List<ProviderBean> getTripDeals(User user, int tripDuration, int numberOfAdults, int numberOfChildren);
+
+
     List<User> getAllUsers();
 
-
+    User getUser(String userName);
 
     void addUser(User user);
 
-    List<ProviderBean> getTripDeals(User user);
+
 
     VisitedLocationBean trackUserLocation(User user);
 
