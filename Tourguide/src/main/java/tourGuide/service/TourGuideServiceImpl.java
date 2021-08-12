@@ -2,6 +2,7 @@ package tourGuide.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tourGuide.beans.AttractionBean;
 import tourGuide.beans.LocationBean;
@@ -29,26 +30,28 @@ public class TourGuideServiceImpl implements TourGuideService {
 
     private final Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 
-
+    @Autowired
     private GpsUtilProxy gpsUtilProxy;
 
+    @Autowired
     private RewardsProxy rewardsProxy;
 
-    private TripPriceProxy tripPriceProxy;
+    //    @Autowired
+    private static   TripPriceProxy tripPriceProxy;
 
-    private RewardsServiceImpl rewardsServiceImpl;
+    private RewardsService rewardsService;
+
 
     public Tracker tracker;
 
     boolean testMode = true;
 
+    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsProxy rewardsProxy, TripPriceProxy tripPriceProxy) {
 
-    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsProxy rewardsProxy, TripPriceProxy tripPriceProxy, RewardsServiceImpl rewardsServiceImpl) {
-
-        this.gpsUtilProxy       = gpsUtilProxy;
-        this.rewardsProxy       = rewardsProxy;
-        this.tripPriceProxy     = tripPriceProxy;
-        this.rewardsServiceImpl = rewardsServiceImpl;
+        this.gpsUtilProxy = gpsUtilProxy;
+        this.rewardsProxy = rewardsProxy;
+        this.tripPriceProxy = tripPriceProxy;
+        rewardsService    = new RewardsServiceImpl(gpsUtilProxy, rewardsProxy);
 
         if (testMode) {
             logger.info("TestMode enabled");
@@ -59,6 +62,8 @@ public class TourGuideServiceImpl implements TourGuideService {
         tracker = new Tracker(this);
         addShutDownHook();
     }
+
+
 
     @Override
     public VisitedLocationBean getUserLocation(String userName) {
@@ -80,7 +85,7 @@ public class TourGuideServiceImpl implements TourGuideService {
         logger.info("Getting 5 near attractions for " + user);
         TreeMap<Double, NearByAttractionDto> distanceUserToAttractionList = new TreeMap<>();
         for (AttractionBean attractionBean : gpsUtilProxy.getAttractions()) {
-            double              distance            = rewardsServiceImpl.getDistance(visitedLocationBean.getLocation(), attractionBean);
+            double              distance            = rewardsService.getDistance(visitedLocationBean.getLocation(), attractionBean);
             NearByAttractionDto nearByAttractionDto = new NearByAttractionDto();
             nearByAttractionDto.setAttractionName(attractionBean.getAttractionName());
             nearByAttractionDto.setAttractionLongitude(attractionBean.getLongitude());
@@ -88,7 +93,7 @@ public class TourGuideServiceImpl implements TourGuideService {
             nearByAttractionDto.setUserLongitude(visitedLocationBean.getLocation().getLongitude());
             nearByAttractionDto.setUserLatitude(visitedLocationBean.getLocation().getLatitude());
             nearByAttractionDto.setDistance(distance);
-            nearByAttractionDto.setRewardPoints(rewardsServiceImpl.getRewardPoints(attractionBean, user));
+            nearByAttractionDto.setRewardPoints(rewardsService.getRewardPoints(attractionBean, user));
             distanceUserToAttractionList.put(distance, nearByAttractionDto);
         }
         Set<Map.Entry<Double, NearByAttractionDto>> entrySet            = distanceUserToAttractionList.entrySet();
@@ -109,7 +114,7 @@ public class TourGuideServiceImpl implements TourGuideService {
     public List<UserReward> getUserRewards(User user) {
 
         logger.info("Getting rewards for : " + user);
-        //        rewardsServiceImpl.calculateRewards(user);
+//        rewardsServiceImpl.calculateRewards(user);
         return user.getUserRewardList();
     }
 
@@ -135,10 +140,10 @@ public class TourGuideServiceImpl implements TourGuideService {
 
         int cumulatativeRewardPoints = user.getUserRewardList().stream().mapToInt(i -> i.getRewardPoints()).sum();
         UserPreferences userPreferences = new UserPreferences();
-        userPreferences.setTripDuration(tripDuration);
-        userPreferences.setNumberOfAdults(numberOfAdults);
-        userPreferences.setNumberOfChildren(numberOfChildren);
-        user.setUserPreferences(userPreferences);
+//        userPreferences.setTripDuration(tripDuration);
+//        userPreferences.setNumberOfAdults(numberOfAdults);
+//        userPreferences.setNumberOfChildren(numberOfChildren);
+//        user.setUserPreferences(userPreferences);
 
         List<ProviderBean> providerBeanList = tripPriceProxy.getPrice(
                 tripPricerApiKey,
@@ -168,12 +173,14 @@ public class TourGuideServiceImpl implements TourGuideService {
     @Override
     public List<User> getAllUsers() {
 
+        logger.info("Getting all users list");
         return new ArrayList<>(internalUserMap.values());
     }
 
     @Override
     public void addUser(User user) {
 
+        logger.info("Add " + user + " in DB");
         if (!internalUserMap.containsKey(user.getUserName())) {
             internalUserMap.put(user.getUserName(), user);
         }
@@ -182,9 +189,10 @@ public class TourGuideServiceImpl implements TourGuideService {
     @Override
     public VisitedLocationBean trackUserLocation(User user) {
 
+        logger.info("Get tracking location :" + user);
         VisitedLocationBean visitedLocationBean = gpsUtilProxy.getUserLocation(user.getUserId());
         user.addToVisitedLocations(visitedLocationBean);
-        rewardsServiceImpl.calculateRewards(user);
+        rewardsService.calculateRewards(user);
         return visitedLocationBean;
     }
 

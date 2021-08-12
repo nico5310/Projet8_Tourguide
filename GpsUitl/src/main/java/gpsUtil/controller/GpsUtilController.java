@@ -16,17 +16,16 @@ import java.util.UUID;
 @RequestMapping("/gpsUtil")
 public class GpsUtilController {
 
-
    @Autowired
    private GpsUtilService gpsUtilService;
 
     @GetMapping("/getUserLocation/{userId}")
-    public VisitedLocation getUserLocation(@PathVariable UUID userId) {
+    public VisitedLocation getUserLocation(@PathVariable ("userId") UUID userId) {
 
         return gpsUtilService.getUserLocation(userId);
     }
 
-    @GetMapping("/getAttractions")
+    @GetMapping(value = "/getAttractions")
     public List<Attraction> getAttractions() {
 
         return gpsUtilService.getAttractions();

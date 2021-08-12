@@ -46,9 +46,7 @@ dependencyManagement {
     }
 }
 
-test {
-    useJUnitPlatform()
-}
+
 
 jacoco {
     toolVersion = "0.8.6"

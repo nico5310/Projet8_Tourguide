@@ -2,6 +2,7 @@ package tourGuide.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tourGuide.beans.AttractionBean;
 import tourGuide.beans.LocationBean;
@@ -19,17 +20,15 @@ public class RewardsServiceImpl implements RewardsService {
 
 	private static final Logger logger = LoggerFactory.getLogger(RewardsService.class);
 
-
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
-	// proximity in miles
     private int defaultProximityBuffer = 10;
-
     private int proximityBuffer = defaultProximityBuffer;
-
     private int attractionProximityRange = 200;
 
+    @Autowired
 	private GpsUtilProxy gpsUtilProxy;
 
+    @Autowired
 	private RewardsProxy rewardsProxy;
 
 
@@ -49,14 +48,21 @@ public class RewardsServiceImpl implements RewardsService {
 
 	@Override
 	public void calculateRewards(User user) {
+		// List location visited
 		List<VisitedLocationBean> userLocationBeanList = new ArrayList<>(user.getVisitedLocations());
-		List<AttractionBean>          attractionBeanList   = gpsUtilProxy.getAttractions();
+		// List attraction
+		List<AttractionBean>          attractionBeanList   = new ArrayList<>(gpsUtilProxy.getAttractions());
 
-		for(VisitedLocationBean visitedLocation : userLocationBeanList) {
+		// Check visited location for user
+		for(VisitedLocationBean visitedLocationBean : userLocationBeanList) {
+			// Check location for attractions
 			for(AttractionBean attractionBean : attractionBeanList) {
+				// if user already rewards for attraction
 				if(user.getUserRewardList().stream().noneMatch(r -> r.attractionBean.getAttractionName().equals(attractionBean.getAttractionName()))) {
-					if(nearAttraction(visitedLocation, attractionBean)) {
-						user.addUserReward(new UserReward(visitedLocation, attractionBean, getRewardPoints(attractionBean, user)));
+					// verify location of user a proximity ti location attraction
+					if(nearAttraction(visitedLocationBean, attractionBean)) {
+						// rewards is Ad
+						user.addUserReward(new UserReward(visitedLocationBean, attractionBean, getRewardPoints(attractionBean, user)));
 					}
 				}
 			}
@@ -65,12 +71,12 @@ public class RewardsServiceImpl implements RewardsService {
 
 	@Override
 	public boolean isWithinAttractionProximity(AttractionBean attractionBean, LocationBean locationBean) {
-		return (getDistance(attractionBean, locationBean) < attractionProximityRange);
+		return (getDistance(new LocationBean(attractionBean.getLongitude(), attractionBean.getLatitude()), locationBean) < attractionProximityRange);
 	}
 
 	@Override
 	public boolean nearAttraction(VisitedLocationBean visitedLocationBean, AttractionBean attractionBean) {
-		return (getDistance(attractionBean, visitedLocationBean.getLocation()) < proximityBuffer);
+		return (getDistance(visitedLocationBean.getLocation(), new LocationBean(attractionBean.getLongitude(), attractionBean.getLatitude())) < proximityBuffer);
 	}
 
 	@Override

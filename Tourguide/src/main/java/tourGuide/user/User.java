@@ -76,7 +76,7 @@ public class User {
 
 
 	public void addUserReward(UserReward userReward) {
-		if(userRewardList.stream().noneMatch(r -> r.attractionBean.getAttractionName().equals(userReward.attractionBean.getAttractionName()))) {
+		if (userRewardList.stream().noneMatch(r -> r.attractionBean.getAttractionName().equals(userReward.attractionBean.getAttractionName()))) {
 			userRewardList.add(userReward);
 		}
 	}
