@@ -36,22 +36,21 @@ public class TourGuideServiceImpl implements TourGuideService {
     @Autowired
     private RewardsProxy rewardsProxy;
 
-    //    @Autowired
-    private static   TripPriceProxy tripPriceProxy;
+    private TripPriceProxy tripPriceProxy;
 
-    private RewardsService rewardsService;
+    private RewardsServiceImpl rewardsServiceImpl;
 
 
     public Tracker tracker;
 
     boolean testMode = true;
 
-    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsProxy rewardsProxy, TripPriceProxy tripPriceProxy) {
+    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsProxy rewardsProxy, TripPriceProxy tripPriceProxy, RewardsService rewardsServiceImpl) {
 
-        this.gpsUtilProxy = gpsUtilProxy;
-        this.rewardsProxy = rewardsProxy;
-        this.tripPriceProxy = tripPriceProxy;
-        rewardsService    = new RewardsServiceImpl(gpsUtilProxy, rewardsProxy);
+        this.gpsUtilProxy       = gpsUtilProxy;
+        this.rewardsProxy       = rewardsProxy;
+        this.tripPriceProxy     = tripPriceProxy;
+        this.rewardsServiceImpl = new RewardsServiceImpl(gpsUtilProxy, rewardsProxy);
 
         if (testMode) {
             logger.info("TestMode enabled");
@@ -85,7 +84,7 @@ public class TourGuideServiceImpl implements TourGuideService {
         logger.info("Getting 5 near attractions for " + user);
         TreeMap<Double, NearByAttractionDto> distanceUserToAttractionList = new TreeMap<>();
         for (AttractionBean attractionBean : gpsUtilProxy.getAttractions()) {
-            double              distance            = rewardsService.getDistance(visitedLocationBean.getLocation(), attractionBean);
+            double              distance            = rewardsServiceImpl.getDistance(visitedLocationBean.getLocation(), attractionBean);
             NearByAttractionDto nearByAttractionDto = new NearByAttractionDto();
             nearByAttractionDto.setAttractionName(attractionBean.getAttractionName());
             nearByAttractionDto.setAttractionLongitude(attractionBean.getLongitude());
@@ -93,7 +92,7 @@ public class TourGuideServiceImpl implements TourGuideService {
             nearByAttractionDto.setUserLongitude(visitedLocationBean.getLocation().getLongitude());
             nearByAttractionDto.setUserLatitude(visitedLocationBean.getLocation().getLatitude());
             nearByAttractionDto.setDistance(distance);
-            nearByAttractionDto.setRewardPoints(rewardsService.getRewardPoints(attractionBean, user));
+            nearByAttractionDto.setRewardPoints(rewardsServiceImpl.getRewardPoints(attractionBean, user));
             distanceUserToAttractionList.put(distance, nearByAttractionDto);
         }
         Set<Map.Entry<Double, NearByAttractionDto>> entrySet            = distanceUserToAttractionList.entrySet();
@@ -192,7 +191,7 @@ public class TourGuideServiceImpl implements TourGuideService {
         logger.info("Get tracking location :" + user);
         VisitedLocationBean visitedLocationBean = gpsUtilProxy.getUserLocation(user.getUserId());
         user.addToVisitedLocations(visitedLocationBean);
-        rewardsService.calculateRewards(user);
+        rewardsServiceImpl.calculateRewards(user);
         return visitedLocationBean;
     }
 

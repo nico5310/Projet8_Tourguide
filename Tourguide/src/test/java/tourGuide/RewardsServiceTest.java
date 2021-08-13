@@ -21,9 +21,9 @@ import tourGuide.user.UserReward;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
+@DisplayName("Reward Service Test")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class RewardsServiceTest {
@@ -40,13 +40,13 @@ public class RewardsServiceTest {
     @Autowired
     private TourGuideServiceImpl tourGuideServiceImpl;
 
-	private static Locale locale = new Locale("en", "US");
-
-	@Test // OK
+	@Test
+	@DisplayName("userGetRewardsTest")
 	public void userGetRewardsTest() {
 		RewardsServiceImpl rewardsServiceImpl = new RewardsServiceImpl(gpsUtilProxy, rewardsProxy);
 		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideServiceImpl tourGuideServiceImpl = new TourGuideServiceImpl(gpsUtilProxy,rewardsProxy, tripPriceProxy);
+		TourGuideServiceImpl tourGuideServiceImpl = new TourGuideServiceImpl(gpsUtilProxy,rewardsProxy,
+				tripPriceProxy, rewardsServiceImpl);
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		AttractionBean attractionBean = gpsUtilProxy.getAttractions().get(0);
@@ -54,22 +54,24 @@ public class RewardsServiceTest {
 		tourGuideServiceImpl.trackUserLocation(user);
 		List<UserReward> userRewards = user.getUserRewardList();
 		tourGuideServiceImpl.tracker.stopTracking();
+
 		Assertions.assertEquals(1, userRewards.size());
 	}
 
-	@Test // OK
+	@Test
 	@DisplayName("isWithinAttractionProximityTest")
 	public void isWithinAttractionProximityTest() {
 
 		RewardsServiceImpl rewardsServiceImpl = new RewardsServiceImpl(gpsUtilProxy, rewardsProxy);
 
 		AttractionBean attractionBean = gpsUtilProxy.getAttractions().get(0);
+
 		Assertions.assertTrue(rewardsServiceImpl.isWithinAttractionProximity(attractionBean, new LocationBean(attractionBean.getLongitude(), attractionBean
 				.getLatitude())));
 	}
 
 
-	@Test // OK
+	@Test
 	@DisplayName("nearAllAttractionsTest")
 	public void nearAllAttractionsTest() {
 
