@@ -1,11 +1,10 @@
 
-
 plugins {
     id 'java'
     id'eclipse'
     id 'idea'
     id 'org.springframework.boot' version '2.5.3'
-    id 'io.spring.dependency-management' version "1.0.11.RELEASE"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
     id 'jacoco'
 }
 
@@ -16,9 +15,10 @@ sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
 }
-
-
 
 ext {
     set('springCloudVersion', "2020.0.3")
@@ -47,11 +47,9 @@ dependencyManagement {
     }
 }
 
-test{
+test {
     useJUnitPlatform()
 }
-
-
 
 
 jacoco {
