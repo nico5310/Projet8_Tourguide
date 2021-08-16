@@ -71,7 +71,8 @@ public class PerformanceTest {
 	public void trackLocationTo100UsersTest() {
 
 		RewardsServiceImpl rewardsServiceImpl = new RewardsServiceImpl(gpsUtilProxy, rewardsProxy);
-		// Users should be incremented up to 100,000, and test finishes within 15 minutes (900 sec) (simple thread 8.9 sec for 100)
+		// Users should be incremented up to 100,000, and test finishes within 15 minutes (900 sec)
+		// (simple thread 8.9 sec for 100 user => env 8900 sec )
 		InternalTestHelper.setInternalUserNumber(100);
 		TourGuideServiceImpl tourGuideServiceImpl = new TourGuideServiceImpl(gpsUtilProxy,rewardsProxy,
 				tripPriceProxy, rewardsServiceImpl);
@@ -92,10 +93,12 @@ public class PerformanceTest {
 
 
 	@Test
-	public void getRewardsTo100UsersTest() {
+	@DisplayName("getRewardsTo100000UsersTest")
+	public void getRewardsTo100000UsersTest() throws InterruptedException {
 
-		// Users should be incremented up to 100,000, and test finishes within 20 minutes (1200 sec) (simple thread 36.8 sec for 100)
-		InternalTestHelper.setInternalUserNumber(100);
+		// Users should be incremented up to 100,000, and test finishes within 20 minutes (1200 sec)
+		// (simple thread 36.8 sec for 100 => env 36800 sec)
+		InternalTestHelper.setInternalUserNumber(100000);
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 
@@ -103,7 +106,9 @@ public class PerformanceTest {
 		List<User>     allUsers       = new ArrayList<>(tourGuideServiceImpl.getAllUsers());
 		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocationBean(u.getUserId(), new LocationBean(attractionBean.getLongitude(), attractionBean.getLatitude()), new Date())));
 
-		allUsers.forEach(u -> rewardsServiceImpl.calculateRewards(u));
+		allUsers.forEach(u -> rewardsServiceImpl.calculateRewardsWithThread(u));
+
+		rewardsServiceImpl.shutdown();
 
 		for(User user : allUsers) {
 			assertTrue(user.getUserRewardList().size() > 0);
@@ -111,7 +116,7 @@ public class PerformanceTest {
 		stopWatch.stop();
 		tourGuideServiceImpl.tracker.stopTracking();
 
-		System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
+		System.out.println("getRewardsTo100000UsersTest: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
 		assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	}
 	

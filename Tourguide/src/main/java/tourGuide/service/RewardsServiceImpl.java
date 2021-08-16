@@ -14,11 +14,16 @@ import tourGuide.user.UserReward;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class RewardsServiceImpl implements RewardsService {
 
 	private static final Logger logger = LoggerFactory.getLogger(RewardsService.class);
+
+	private final ExecutorService executorService = Executors.newFixedThreadPool(1000);
 
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
     private int defaultProximityBuffer = 10;
@@ -67,6 +72,22 @@ public class RewardsServiceImpl implements RewardsService {
 				}
 			}
 		}
+	}
+
+	public void calculateRewardsWithThread(User user) {
+		executorService.execute(new Runnable() {
+			public void run() {
+				calculateRewards (user);
+			}
+		});
+	}
+
+	public void shutdown() throws InterruptedException{
+		//shutdown means the executor service takes no more incoming tasks.
+		executorService.shutdown();
+
+		// awaitTermination is invoked after a shutdown request.
+		executorService.awaitTermination(15, TimeUnit.MINUTES);
 	}
 
 	@Override

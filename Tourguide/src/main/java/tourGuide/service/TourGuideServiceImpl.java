@@ -2,7 +2,6 @@ package tourGuide.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tourGuide.beans.AttractionBean;
 import tourGuide.beans.LocationBean;
@@ -23,6 +22,8 @@ import tourGuide.user.UserReward;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
 @Service
@@ -30,10 +31,10 @@ public class TourGuideServiceImpl implements TourGuideService {
 
     private final Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 
-    @Autowired
+    private final ExecutorService executorService = Executors.newFixedThreadPool(30);
+
     private GpsUtilProxy gpsUtilProxy;
 
-    @Autowired
     private RewardsProxy rewardsProxy;
 
     private TripPriceProxy tripPriceProxy;
@@ -113,7 +114,6 @@ public class TourGuideServiceImpl implements TourGuideService {
     public List<UserReward> getUserRewards(User user) {
 
         logger.info("Getting rewards for : " + user);
-//        rewardsServiceImpl.calculateRewards(user);
         return user.getUserRewardList();
     }
 
@@ -139,10 +139,7 @@ public class TourGuideServiceImpl implements TourGuideService {
 
         int cumulatativeRewardPoints = user.getUserRewardList().stream().mapToInt(i -> i.getRewardPoints()).sum();
         UserPreferences userPreferences = new UserPreferences();
-//        userPreferences.setTripDuration(tripDuration);
-//        userPreferences.setNumberOfAdults(numberOfAdults);
-//        userPreferences.setNumberOfChildren(numberOfChildren);
-//        user.setUserPreferences(userPreferences);
+
 
         List<ProviderBean> providerBeanList = tripPriceProxy.getPrice(
                 tripPricerApiKey,
