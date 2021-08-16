@@ -67,8 +67,8 @@ public class PerformanceTest {
 
 
 	@Test
-	@DisplayName("trackLocationTo100UsersTest")
-	public void trackLocationTo100UsersTest() {
+	@DisplayName("trackLocationTo100000UsersTest")
+	public void trackLocationTo100000UsersTest() {
 
 		RewardsServiceImpl rewardsServiceImpl = new RewardsServiceImpl(gpsUtilProxy, rewardsProxy);
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes (900 sec)
@@ -95,10 +95,7 @@ public class PerformanceTest {
 	@Test
 	@DisplayName("getRewardsTo100000UsersTest")
 	public void getRewardsTo100000UsersTest() throws InterruptedException {
-
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes (1200 sec)
-		// (simple thread 36.8 sec for 100 => env 36800 sec)
-		InternalTestHelper.setInternalUserNumber(100000);
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 

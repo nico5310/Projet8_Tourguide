@@ -85,9 +85,15 @@ public class RewardsServiceImpl implements RewardsService {
 	public void shutdown() throws InterruptedException{
 		//shutdown means the executor service takes no more incoming tasks.
 		executorService.shutdown();
-
-		// awaitTermination is invoked after a shutdown request.
-		executorService.awaitTermination(15, TimeUnit.MINUTES);
+		try {
+			// awaitTermination is invoked after a shutdown request.
+			if (!executorService.awaitTermination(20, TimeUnit.MINUTES)) {
+				executorService.shutdownNow();
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			executorService.shutdownNow();
+		 }
 	}
 
 	@Override
