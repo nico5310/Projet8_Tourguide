@@ -24,6 +24,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 @Service
@@ -31,7 +32,7 @@ public class TourGuideServiceImpl implements TourGuideService {
 
     private final Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(30);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(1000);
 
     private GpsUtilProxy gpsUtilProxy;
 
@@ -190,6 +191,31 @@ public class TourGuideServiceImpl implements TourGuideService {
         user.addToVisitedLocations(visitedLocationBean);
         rewardsServiceImpl.calculateRewards(user);
         return visitedLocationBean;
+    }
+
+
+    // Method multi-thread
+    public void trackUserLocationWithThread(User user) {
+        executorService.execute(new Runnable() {
+            public void run() {
+                trackUserLocation (user);
+            }
+        });
+
+    }
+
+    public void shutdown() throws InterruptedException{
+        //shutdown means the executor service takes no more incoming tasks.
+        executorService.shutdown();
+        try {
+            // awaitTermination is invoked after a shutdown request.
+            if (!executorService.awaitTermination(20, TimeUnit.MINUTES)) {
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            executorService.shutdownNow();
+        }
     }
 
 

@@ -10,7 +10,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tourGuide.beans.AttractionBean;
 import tourGuide.beans.LocationBean;
 import tourGuide.beans.VisitedLocationBean;
-import tourGuide.helper.InternalTestHelper;
 import tourGuide.proxies.GpsUtilProxy;
 import tourGuide.proxies.RewardsProxy;
 import tourGuide.proxies.TripPriceProxy;
@@ -68,26 +67,25 @@ public class PerformanceTest {
 
 	@Test
 	@DisplayName("trackLocationTo100000UsersTest")
-	public void trackLocationTo100000UsersTest() {
-
-		RewardsServiceImpl rewardsServiceImpl = new RewardsServiceImpl(gpsUtilProxy, rewardsProxy);
+	public void trackLocationTo100000UsersTest() throws InterruptedException {
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes (900 sec)
 		// (simple thread 8.9 sec for 100 user => env 8900 sec )
-		InternalTestHelper.setInternalUserNumber(100);
-		TourGuideServiceImpl tourGuideServiceImpl = new TourGuideServiceImpl(gpsUtilProxy,rewardsProxy,
-				tripPriceProxy, rewardsServiceImpl);
+
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 
 		List<User> allUsers = new ArrayList<>(tourGuideServiceImpl.getAllUsers());
 
-	    StopWatch stopWatch = new StopWatch();
-		stopWatch.start();
 		for(User user : allUsers) {
-			tourGuideServiceImpl.trackUserLocation(user);
+			tourGuideServiceImpl.trackUserLocationWithThread(user);
 		}
+
+		tourGuideServiceImpl.shutdown();
+
 		stopWatch.stop();
 		tourGuideServiceImpl.tracker.stopTracking();
 
-		System.out.println("highVolumeTrackLocation: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
+		System.out.println("trackLocationTo100000Users: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
 		assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	}
 
@@ -96,13 +94,14 @@ public class PerformanceTest {
 	@DisplayName("getRewardsTo100000UsersTest")
 	public void getRewardsTo100000UsersTest() throws InterruptedException {
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes (1200 sec)
+
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 
 	    AttractionBean attractionBean = gpsUtilProxy.getAttractions().get(0);
-		List<User>     allUsers       = new ArrayList<>(tourGuideServiceImpl.getAllUsers());
-		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocationBean(u.getUserId(), new LocationBean(attractionBean.getLongitude(), attractionBean.getLatitude()), new Date())));
+		List<User> allUsers = new ArrayList<>(tourGuideServiceImpl.getAllUsers());
 
+		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocationBean(u.getUserId(), new LocationBean(attractionBean.getLongitude(), attractionBean.getLatitude()), new Date())));
 		allUsers.forEach(u -> rewardsServiceImpl.calculateRewardsWithThread(u));
 
 		rewardsServiceImpl.shutdown();

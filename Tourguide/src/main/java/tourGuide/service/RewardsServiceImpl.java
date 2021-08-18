@@ -56,7 +56,7 @@ public class RewardsServiceImpl implements RewardsService {
 		// List location visited
 		List<VisitedLocationBean> userLocationBeanList = new ArrayList<>(user.getVisitedLocations());
 		// List attraction
-		List<AttractionBean>          attractionBeanList   = new ArrayList<>(gpsUtilProxy.getAttractions());
+		List<AttractionBean> attractionBeanList   = new ArrayList<>(gpsUtilProxy.getAttractions());
 
 		// Check visited location for user
 		for(VisitedLocationBean visitedLocationBean : userLocationBeanList) {
@@ -74,6 +74,7 @@ public class RewardsServiceImpl implements RewardsService {
 		}
 	}
 
+	// Method multi-thread
 	public void calculateRewardsWithThread(User user) {
 		executorService.execute(new Runnable() {
 			public void run() {
@@ -87,7 +88,7 @@ public class RewardsServiceImpl implements RewardsService {
 		executorService.shutdown();
 		try {
 			// awaitTermination is invoked after a shutdown request.
-			if (!executorService.awaitTermination(20, TimeUnit.MINUTES)) {
+			if (!executorService.awaitTermination(15, TimeUnit.MINUTES)) {
 				executorService.shutdownNow();
 			}
 		} catch (InterruptedException e) {
@@ -95,6 +96,7 @@ public class RewardsServiceImpl implements RewardsService {
 			executorService.shutdownNow();
 		 }
 	}
+
 
 	@Override
 	public boolean isWithinAttractionProximity(AttractionBean attractionBean, LocationBean locationBean) {
