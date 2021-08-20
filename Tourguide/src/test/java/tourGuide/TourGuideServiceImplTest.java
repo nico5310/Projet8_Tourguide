@@ -50,7 +50,7 @@ public class TourGuideServiceImplTest {
 		InternalTestHelper.setInternalUserNumber(0);
         TourGuideServiceImpl tourGuideServiceImpl = new TourGuideServiceImpl(gpsUtilProxy,rewardsProxy,
 				tripPriceProxy, rewardsServiceImpl);
-		User                user            = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 
 		VisitedLocationBean visitedLocationBean = tourGuideServiceImpl.trackUserLocation(user);
 		tourGuideServiceImpl.tracker.stopTracking();
