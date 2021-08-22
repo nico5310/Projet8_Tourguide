@@ -3,6 +3,7 @@ package gpsUtil.controller;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import gpsUtil.service.GpsUtilService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,13 +20,15 @@ public class GpsUtilController {
    @Autowired
    private GpsUtilService gpsUtilService;
 
+    @ApiOperation(value = "Get the location of user by his userId")
     @GetMapping("/getUserLocation/{userId}")
     public VisitedLocation getUserLocation(@PathVariable ("userId") UUID userId) {
 
         return gpsUtilService.getUserLocation(userId);
     }
 
-    @GetMapping(value = "/getAttractions")
+    @ApiOperation(value = "Get the list of attractions")
+    @GetMapping("/getAttractions")
     public List<Attraction> getAttractions() {
 
         return gpsUtilService.getAttractions();
