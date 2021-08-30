@@ -12,6 +12,13 @@ group = 'tourGuide'
 version =  '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+bootJar {
+    classifier 'boot'
+}
+
+jar {
+    classifier ''
+}
 
 repositories {
     mavenCentral()
