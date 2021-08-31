@@ -8,17 +8,11 @@ plugins {
     id 'jacoco'
 }
 
-group = 'com.gpsutil'
-version =  '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
 
 bootJar {
-    classifier 'boot'
+    mainClassName('gpsUtil.GpsUtilApplication')
 }
 
-jar {
-    classifier ''
-}
 
 repositories {
     mavenCentral()
