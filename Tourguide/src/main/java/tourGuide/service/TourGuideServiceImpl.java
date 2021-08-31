@@ -13,7 +13,7 @@ import tourGuide.exception.UserNotFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.proxies.GpsUtilProxy;
 import tourGuide.proxies.RewardsProxy;
-import tourGuide.proxies.TripPriceProxy;
+import tourGuide.proxies.TripPricerProxy;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
 import tourGuide.user.UserPreferences;
@@ -38,7 +38,7 @@ public class TourGuideServiceImpl implements TourGuideService {
 
     private RewardsProxy rewardsProxy;
 
-    private TripPriceProxy tripPriceProxy;
+    private TripPricerProxy tripPricerProxy;
 
     private RewardsServiceImpl rewardsServiceImpl;
 
@@ -47,11 +47,11 @@ public class TourGuideServiceImpl implements TourGuideService {
 
     boolean testMode = true;
 
-    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsProxy rewardsProxy, TripPriceProxy tripPriceProxy, RewardsService rewardsServiceImpl) {
+    public TourGuideServiceImpl(GpsUtilProxy gpsUtilProxy, RewardsProxy rewardsProxy, TripPricerProxy tripPricerProxy, RewardsService rewardsServiceImpl) {
 
         this.gpsUtilProxy       = gpsUtilProxy;
         this.rewardsProxy       = rewardsProxy;
-        this.tripPriceProxy     = tripPriceProxy;
+        this.tripPricerProxy    = tripPricerProxy;
         this.rewardsServiceImpl = new RewardsServiceImpl(gpsUtilProxy, rewardsProxy);
 
         if (testMode) {
@@ -142,7 +142,7 @@ public class TourGuideServiceImpl implements TourGuideService {
         UserPreferences userPreferences = new UserPreferences();
 
 
-        List<ProviderBean> providerBeanList = tripPriceProxy.getPrice(
+        List<ProviderBean> providerBeanList = tripPricerProxy.getPrice(
                 tripPricerApiKey,
                 user.getUserId(),
                 user.getUserPreferences().getNumberOfAdults(),

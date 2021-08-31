@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tourGuide.proxies.GpsUtilProxy;
 import tourGuide.proxies.RewardsProxy;
-import tourGuide.proxies.TripPriceProxy;
+import tourGuide.proxies.TripPricerProxy;
 import tourGuide.service.RewardsServiceImpl;
 
 @Configuration
@@ -18,7 +18,7 @@ public class TourGuideModule {
 	RewardsProxy rewardsProxy;
 
 	@Autowired
-	TripPriceProxy tripPriceProxy;
+	TripPricerProxy tripPricerProxy;
 
 	@Bean
 	public RewardsServiceImpl getRewardsService() {

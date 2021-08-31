@@ -13,7 +13,7 @@ import tourGuide.beans.VisitedLocationBean;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.proxies.GpsUtilProxy;
 import tourGuide.proxies.RewardsProxy;
-import tourGuide.proxies.TripPriceProxy;
+import tourGuide.proxies.TripPricerProxy;
 import tourGuide.service.RewardsServiceImpl;
 import tourGuide.service.TourGuideServiceImpl;
 import tourGuide.user.User;
@@ -35,7 +35,7 @@ public class RewardsServiceTest {
     private RewardsProxy rewardsProxy;
 
     @Autowired
-	private TripPriceProxy tripPriceProxy;
+	private TripPricerProxy tripPricerProxy;
 
     @Autowired
     private TourGuideServiceImpl tourGuideServiceImpl;
@@ -45,8 +45,7 @@ public class RewardsServiceTest {
 	public void userGetRewardsTest() {
 		RewardsServiceImpl rewardsServiceImpl = new RewardsServiceImpl(gpsUtilProxy, rewardsProxy);
 		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideServiceImpl tourGuideServiceImpl = new TourGuideServiceImpl(gpsUtilProxy,rewardsProxy,
-				tripPriceProxy, rewardsServiceImpl);
+		TourGuideServiceImpl tourGuideServiceImpl = new TourGuideServiceImpl(gpsUtilProxy,rewardsProxy, tripPricerProxy, rewardsServiceImpl);
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		AttractionBean attractionBean = gpsUtilProxy.getAttractions().get(0);

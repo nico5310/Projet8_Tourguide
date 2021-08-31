@@ -8,11 +8,11 @@ services:
         environment:
             TOURGUIDE_GPSUTIL : gpsutil:8081
             TOURGUIDE_REWARDS : rewards:8082
-            TOURGUIDE_TRIPPRICE : tripprice:8083
+            TOURGUIDE_TRIPPRICE : trippricer:8083
         depends_on:
             -   gpsutil
             -   rewards
-            -   tripprice
+            -   trippricer
         container_name: tourguide
 
     gpsutil:
@@ -29,8 +29,8 @@ services:
             -   "8082:8082"
         container_name: rewards
 
-    tripprice:
-        image: tripprice
+    trippricer:
+        image: trippricer
         restart: always
         ports:
             -   "8083:8083"

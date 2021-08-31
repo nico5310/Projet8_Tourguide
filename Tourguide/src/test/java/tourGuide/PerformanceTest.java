@@ -12,7 +12,7 @@ import tourGuide.beans.LocationBean;
 import tourGuide.beans.VisitedLocationBean;
 import tourGuide.proxies.GpsUtilProxy;
 import tourGuide.proxies.RewardsProxy;
-import tourGuide.proxies.TripPriceProxy;
+import tourGuide.proxies.TripPricerProxy;
 import tourGuide.service.RewardsServiceImpl;
 import tourGuide.service.TourGuideServiceImpl;
 import tourGuide.user.User;
@@ -56,7 +56,7 @@ public class PerformanceTest {
 	private RewardsProxy rewardsProxy;
 
 	@Autowired
-	private TripPriceProxy tripPriceProxy;
+	private TripPricerProxy tripPricerProxy;
 
 	@Autowired
 	private TourGuideServiceImpl tourGuideServiceImpl;
