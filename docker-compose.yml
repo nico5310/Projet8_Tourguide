@@ -6,9 +6,9 @@ services:
         ports:
             - "8080:8080"
         environment:
-            TOURGUIDE_GPSUTIL : gpsutil:8081
-            TOURGUIDE_REWARDS : rewards:8082
-            TOURGUIDE_TRIPPRICE : trippricer:8083
+            - GPSUTIL_URL=gpsutil:8081
+            - REWARDS_URL=rewards:8082
+            - TRIPPRICER_URL=trippricer:8083
         depends_on:
             -   gpsutil
             -   rewards

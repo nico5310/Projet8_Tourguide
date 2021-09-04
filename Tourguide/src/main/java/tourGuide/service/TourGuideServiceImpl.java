@@ -186,6 +186,11 @@ public class TourGuideServiceImpl implements TourGuideService {
     @Override
     public VisitedLocationBean trackUserLocation(User user) {
 
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         logger.info("Get tracking location :" + user);
         VisitedLocationBean visitedLocationBean = gpsUtilProxy.getUserLocation(user.getUserId());
         user.addToVisitedLocations(visitedLocationBean);

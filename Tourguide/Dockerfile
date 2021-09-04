@@ -6,6 +6,6 @@ ARG JAR_FILE=build/libs/TourGuide.jar
 COPY ${JAR_FILE} tourGuide.jar
 # Sets the main command for the image
 ENTRYPOINT ["java", "-jar", "/tourGuide.jar"]
-# Expose 8081 port number application uses
+# Expose 8080 port number application uses
 EXPOSE 8080
 

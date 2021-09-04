@@ -9,7 +9,7 @@ import tourGuide.beans.VisitedLocationBean;
 import java.util.List;
 import java.util.UUID;
 
-@FeignClient(name = "GpsUtil-microservice", url = "localhost:8081")
+@FeignClient(name = "GpsUtil-microservice", url = "${gpsutil.url}") //localhost:8081")
 public interface GpsUtilProxy {
 
     @GetMapping(value = "/gpsUtil/getUserLocation/{userId}")
