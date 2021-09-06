@@ -1,4 +1,4 @@
-package com.tourguide.trippricer.controller;
+package tripPricer.controller;
 
 
 import org.junit.jupiter.api.DisplayName;
@@ -34,5 +34,6 @@ public class TripPricerControllerTest {
         mockMvc.perform(get("/tripPricer/getPrice/" + UUID.randomUUID() + "/" + UUID.randomUUID() + "/" + 1 + "/" + 1 + "/" + 1 + "/" + 1)).andExpect(status().isOk());
 
     }
+
 
 }
