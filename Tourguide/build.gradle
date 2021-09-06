@@ -64,12 +64,10 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
-                    'tourGuide/TourGuideApplication',
                     'tourGuide/user/**',
                     'tourGuide/beans/**',
                     'tourGuide/dto/**',
-                    'tourGuide/exception/**',
-                    'tourGuide/tourGuide/**'
+                    'tourGuide/exception/**'
             ])
         }))
     }
