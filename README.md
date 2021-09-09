@@ -31,6 +31,7 @@ TripPricer service:
 
 <h2> Technical Schema Conception</h2>
 <img src="../.readme/conception.png" alt="Schema"/>
+![Schema] (https://github.com/nico5310/Projet8_Tourguide/blob/develop/.readme/conception.png)
 
 
 <h2> Technic Documentation </h2>
